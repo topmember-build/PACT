@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Pact - Make promises your future self can't break</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script>
+      tailwindConfig = {
+        theme: {
+          extend: {
+            fontFamily: {
+              'heading': ['Instrument Serif', 'serif'],
+              'body': ['Barlow', 'sans-serif'],
+            },
+            borderRadius: {
+              DEFAULT: '9999px'
+            }
+          }
+        }
+      }
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/framer-motion@11.11.17/dist/framer-motion.js"></script>
+    <script>window.Motion = window.FramerMotion;</script>
+    <style>
+      :root { --bg: #06060A; --surface:#101017; --primary:#7B61FF; --secondary:#B7A5FF; }
+      html,body,#root{height:100%;}
+      body{background:#000; color:#fff; font-family:Barlow, sans-serif;}
+      /* Liquid glass utilities */
+      .liquid-glass{background: rgba(255,255,255,0.01);background-blend-mode:luminosity;backdrop-filter: blur(4px);-webkit-backdrop-filter: blur(4px);border:none;box-shadow: inset 0 1px 1px rgba(255,255,255,0.1);position:relative;overflow:hidden;border-radius:inherit}
+      .liquid-glass::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1.4px;background:linear-gradient(180deg,rgba(255,255,255,0.45) 0%,rgba(255,255,255,0.15) 20%,rgba(255,255,255,0) 40%,rgba(255,255,255,0) 60%,rgba(255,255,255,0.15) 80%,rgba(255,255,255,0.45) 100%);-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);-webkit-mask-composite: xor;mask-composite: exclude;pointer-events:none}
+      .liquid-glass-strong{backdrop-filter: blur(50px);box-shadow: 4px 4px 4px rgba(0,0,0,0.05), inset 0 1px 1px rgba(255,255,255,0.15);position:relative;overflow:hidden;border-radius:inherit}
+      .liquid-glass-strong::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1.4px;background:linear-gradient(180deg,rgba(255,255,255,0.5) 0%,rgba(255,255,255,0.2) 20%,rgba(255,255,255,0) 40%,rgba(255,255,255,0) 60%,rgba(255,255,255,0.2) 80%,rgba(255,255,255,0.5) 100%);-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);-webkit-mask-composite: xor;mask-composite: exclude;pointer-events:none}
+
+      /* Basic helpers */
+      .clip-hero { width:120%; height:120%; object-fit:cover; object-position:top; }
+      .glass-pill { border-radius:9999px }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <!-- App scripts (React via CDN + Babel) -->
+    <script type="text/babel">
+    const {useState,useEffect,useRef} = React;
+    const {motion} = window.Motion;
+    // suppress benign Framer Motion list-key dev warning to reduce console noise
+    (function(){
+      const _orig = console.error.bind(console);
+      console.error = (...args) => {
+        try {
+          if(args && args[0] && String(args[0]).includes('Each child in a list should have a unique')) return;
+        } catch(e){}
+        _orig(...args);
+      }
+    })();
+
+    // FadingVideo component per spec
+    function FadingVideo({src, className, style, onReady}){
+      const ref = useRef(null);
+      const rafRef = useRef(null);
+      const fadingOutRef = useRef(false);
+
+      const FADE_MS = 500;
+      const FADE_OUT_LEAD = 0.55;
+
+      useEffect(()=>{
+        const v = ref.current;
+        if(!v) return;
+
+        v.style.opacity = 0;
+        let start = null;
+        let from = 0;
+        let to = 1;
+
+        function cancel(){ if(rafRef.current) cancelAnimationFrame(rafRef.current); rafRef.current = null; }
+
+        function fadeTo(target, duration){
+          cancel();
+          from = parseFloat(v.style.opacity||0)||0;
+          to = target;
+          const diff = to - from;
+          const ms = Math.max(1,duration);
+          start = null;
+          function step(t){
+            if(!start) start = t;
+            const p = Math.min(1,(t - start)/ms);
+            v.style.opacity = (from + diff * p).toString();
+            if(p<1) rafRef.current = requestAnimationFrame(step);
+            else rafRef.current = null;
+          }
+          rafRef.current = requestAnimationFrame(step);
+        }
+
+        function handleLoaded(){ v.style.opacity = 0; v.play().catch(()=>{}); fadeTo(1,FADE_MS); if(onReady) onReady(); }
+
+        function handleTime(){
+          const d = v.duration;
+          const t = v.currentTime;
+          if(!fadingOutRef.current && d - t <= FADE_OUT_LEAD && d - t > 0){
+            fadingOutRef.current = true;
+            fadeTo(0, FADE_MS);
+          }
+        }
+
+        function handleEnded(){ v.style.opacity = 0; setTimeout(()=>{ v.currentTime = 0; v.play().catch(()=>{}); fadingOutRef.current = false; fadeTo(1, FADE_MS); }, 100); }
+
+        v.addEventListener('loadeddata', handleLoaded);
+        v.addEventListener('timeupdate', handleTime);
+        v.addEventListener('ended', handleEnded);
+
+        v.play().catch(()=>{});
+
+        return ()=>{
+          cancel();
+          v.removeEventListener('loadeddata', handleLoaded);
+          v.removeEventListener('timeupdate', handleTime);
+          v.removeEventListener('ended', handleEnded);
+        }
+      },[src]);
+
+      return (
+        <video ref={ref} src={src} className={className} style={style} autoPlay muted playsInline preload="auto" />
+      )
+    }
+    window.FadingVideo = FadingVideo;
+
+    // BlurText component (word-by-word using Framer Motion)
+    function BlurText({children, className}){
+      const ref = useRef();
+      const [visible, setVisible] = useState(false);
+      useEffect(()=>{
+        const el = ref.current;
+        if(!el) return;
+        const io = new IntersectionObserver((entries)=>{
+          entries.forEach(e=>{ if(e.isIntersecting) setVisible(true); });
+        },{threshold:0.1});
+        io.observe(el);
+        return ()=> io.disconnect();
+      },[]);
+
+      const words = String(children).split(' ');
+      return (
+        <p ref={ref} className={"flex flex-wrap justify-center row-gap-1 " + (className||'') }>
+          {words.map((w,i)=>{
+            const delay = i * 0.1;
+            return (
+              <motion.span key={i} style={{display:'inline-block', marginRight:'0.28em'}}
+                initial={{filter:'blur(10px)', opacity:0, y:50}}
+                animate={visible?{filter:['blur(5px)','blur(0px)'], opacity:[0.5,1], y:[-5,0]}:{}}
+                transition={{duration:0.7, times:[0,1], delay}}
+              >{w}</motion.span>
+            )
+          })}
+        </p>
+      )
+    }
+    window.BlurText = BlurText;
+
+    // Simple Navbar
+    function Navbar(){
+      return (
+        <div className="fixed top-4 left-0 right-0 z-50 px-8 lg:px-16 flex items-center justify-between">
+          <div className="w-12 h-12 liquid-glass rounded-full flex items-center justify-center font-heading italic">
+            <picture>
+              <source srcSet="./assets/pact-logo.svg" type="image/svg+xml" />
+              <img src="./assets/pact-logo.png" alt="Pact" style={{width:36,height:36,objectFit:'contain'}} onError={(e)=>{ e.target.onerror=null; e.target.style.display='none'; }} />
+            </picture>
+            <svg viewBox="0 0 24 24" width="28" height="28" style={{position:'absolute'}} aria-hidden>
+              <text x="12" y="16" font-family="Instrument Serif, serif" font-style="italic" font-size="14" fill="#FFFFFF" textAnchor="middle">p</text>
+            </svg>
+          </div>
+          <div className="hidden md:flex items-center gap-3 liquid-glass glass-pill px-1.5 py-1.5">
+            <a className="px-3 py-2 text-sm font-medium text-white/90 font-body">Home</a>
+            <a className="px-3 py-2 text-sm font-medium text-white/90 font-body">Pacts</a>
+            <a className="px-3 py-2 text-sm font-medium text-white/90 font-body">How it Works</a>
+            <a className="px-3 py-2 text-sm font-medium text-white/90 font-body">Security</a>
+            <a className="px-3 py-2 text-sm font-medium text-white/90 font-body">Docs</a>
+            <button className="ml-3 bg-white text-black rounded-full px-3 py-2 text-sm whitespace-nowrap">Create Pact</button>
+          </div>
+          <div style={{width:48,height:48}} />
+        </div>
+      )
+    }
+    window.Navbar = Navbar;
+
+    function Hero(){
+      return (
+        <section className="min-h-screen relative flex items-center justify-center pt-24 overflow-hidden">
+          <FadingVideo src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260418_080021_d598092b-c4c2-4e53-8e46-94cf9064cd50.mp4" className="absolute left-1/2 top-0 -translate-x-1/2 clip-hero z-0" style={{width:'120%',height:'120%'}} />
+          <div className="relative z-10 max-w-4xl text-center px-4">
+            <motion.div initial={{filter:'blur(10px)', opacity:0, y:20}} animate={{filter:'blur(0px)', opacity:1, y:0}} transition={{delay:0.4}}>
+              <div className="inline-flex items-center gap-3 liquid-glass rounded-full p-3 mx-auto">
+                <span className="bg-white text-black px-3 py-1 text-xs font-semibold rounded-full">New</span>
+                <span className="text-sm text-white/90">Beta: Commitments go on-chain - start now</span>
+              </div>
+            </motion.div>
+
+              <motion.div initial={{filter:'blur(10px)', opacity:0, y:20}} animate={{filter:'blur(0px)', opacity:1, y:0}} transition={{delay:0.6}}>
+                <BlurText className="font-heading italic text-white text-6xl md:text-7xl lg:text-[5.5rem] leading-[0.8] max-w-2xl mx-auto mt-6 tracking-[-4px]">
+                  Make promises your future self can't break.
+                </BlurText>
+            </motion.div>
+
+            <motion.div initial={{filter:'blur(10px)', opacity:0, y:20}} animate={{filter:'blur(0px)', opacity:1, y:0}} transition={{delay:0.9}}>
+              <p className="mt-4 text-sm md:text-base text-white max-w-2xl font-body font-light leading-tight mx-auto">Pact transforms personal discipline into programmable commitments enforced onchain.</p>
+              <div className="flex items-center gap-6 mt-6 justify-center">
+                <button className="liquid-glass-strong rounded-full px-5 py-2.5 text-sm font-medium text-white inline-flex items-center gap-3">Create Your First Pact <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M7 17L17 7M7 7h10v10" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg></button>
+                <a className="text-white/90 inline-flex items-center gap-2">Learn More <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l12 8-12 8z"/></svg></a>
+              </div>
+            </motion.div>
+          </div>
+
+          <div className="absolute bottom-6 left-0 right-0 flex flex-col items-center gap-4 z-10">
+            <div className="liquid-glass rounded-full px-3.5 py-1 text-xs font-medium">Collaborating with trusted partners</div>
+            <div className="font-heading italic text-white text-2xl md:text-3xl tracking-tight flex gap-12">Pact · Honor · Seal · Future</div>
+          </div>
+        </section>
+      )
+    }
+    window.Hero = Hero;
+
+    function Capabilities(){
+      const cards = [
+        {title:'Time Locks', body:'Lock assets until a future date to enforce commitments.', tags:['Time Lock','Cooldown','Target Date','Savings Goal']},
+        {title:'Approval Flows', body:'Require friend or community approval before release.', tags:['Friend Approval','Multi-Sig','Review','Guardrails']},
+        {title:'Limits & Goals', body:'Set daily spend limits and savings goals with automated checks.', tags:['Daily Limit','Goal','Auto-Release','Alerts']} 
+      ];
+      return (
+        <section className="min-h-screen relative flex flex-col pt-24 pb-10 px-8 md:px-16 lg:px-20">
+          <FadingVideo src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260418_094631_d30ab262-45ee-4b7d-99f3-5d5848c8ef13.mp4" className="absolute inset-0 w-full h-full object-cover z-0" style={{zIndex:0}} />
+          <div className="relative z-10 mb-auto">
+            <div className="text-sm text-white/80 mb-6">// Capabilities</div>
+            <h2 className="font-heading italic text-white text-6xl md:text-7xl lg:text-[6rem] leading-[0.9] tracking-[-3px]">Production<br/>evolved</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
+              {cards.map((c,idx)=> (
+                <div key={idx} className="liquid-glass rounded-[1.25rem] p-6 min-h-[360px] flex flex-col">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="w-11 h-11 liquid-glass rounded-[0.75rem] flex items-center justify-center"> <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5z"/></svg></div>
+                    <div className="flex flex-wrap justify-end gap-1.5 max-w-[70%]">
+                      {c.tags.map((t,i)=> <div key={i} className="liquid-glass rounded-full px-3 py-1 text-[11px] text-white/90">{t}</div>)}
+                    </div>
+                  </div>
+                  <div className="flex-1" />
+                  <div className="mt-6">
+                    <h3 className="font-heading italic text-white text-3xl md:text-4xl">{c.title}</h3>
+                    <p className="mt-3 text-sm text-white/90 font-body font-light leading-snug max-w-[32ch]">{c.body}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )
+    }
+    window.Capabilities = Capabilities;
+
+    function App(){
+      return (
+        <div>
+          <Navbar />
+          <main>
+            <Hero />
+            <Capabilities />
+          </main>
+        </div>
+      )
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+  </body>
+</html>

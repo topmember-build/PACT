@@ -1,0 +1,23 @@
+<svg width="240" height="240" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="logoGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#A47DFF"/>
+      <stop offset="45%" stop-color="#8F5BFF"/>
+      <stop offset="100%" stop-color="#4D1FE4"/>
+    </linearGradient>
+    <filter id="blurGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="12" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="240" height="240" rx="48" fill="#08060F"/>
+  <g filter="url(#blurGlow)">
+    <path d="M67 50C92 42 124 31 141 58C159 86 153 132 127 155C105 175 80 181 61 178C48 176 38 170 30 159C21 148 15 133 12 116C10 97 15 76 67 50Z" fill="url(#logoGrad)"/>
+    <path d="M135 61C160 74 177 106 170 136C162 170 130 190 95 190C78 190 65 186 54 179C43 173 34 161 31 146C28 128 33 107 69 83C97 63 122 58 135 61Z" fill="#1B0B2E" opacity="0.9"/>
+  </g>
+  <path d="M79 58C104 50 136 39 153 66C171 94 165 140 139 163C117 183 92 189 73 186C60 184 50 178 42 167C33 156 27 141 24 124C22 105 27 84 79 58Z" fill="url(#logoGrad)"/>
+  <circle cx="135" cy="66" r="14" fill="#F8F4FF" opacity="0.9"/>
+</svg>
