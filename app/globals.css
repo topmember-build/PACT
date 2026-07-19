@@ -1,4 +1,4 @@
-﻿@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -147,26 +147,44 @@ svg {
 
 /* --- GLASS MORPHISM ---------------------------------------------------------- */
 .glass {
-  background: rgba(10, 10, 40, 0.4);
-  backdrop-filter: blur(24px) saturate(1.4);
-  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  background: rgba(10, 10, 40, 0.92);
   border: 1px solid var(--color-border);
+}
+
+@media (min-width: 768px) {
+  .glass {
+    background: rgba(10, 10, 40, 0.4);
+    backdrop-filter: blur(24px) saturate(1.4);
+    -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  }
 }
 
 .glass-strong {
-  background: rgba(15, 15, 50, 0.6);
-  backdrop-filter: blur(36px) saturate(1.6);
-  -webkit-backdrop-filter: blur(36px) saturate(1.6);
+  background: rgba(15, 15, 50, 0.96);
   border: 1px solid var(--color-border-2);
 }
 
+@media (min-width: 768px) {
+  .glass-strong {
+    background: rgba(15, 15, 50, 0.6);
+    backdrop-filter: blur(36px) saturate(1.6);
+    -webkit-backdrop-filter: blur(36px) saturate(1.6);
+  }
+}
+
 .glass-card {
-  background: rgba(var(--color-white), 0.03);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   transition: border-color 0.2s var(--ease-smooth), transform 0.2s var(--ease-smooth), background 0.3s;
+}
+
+@media (min-width: 768px) {
+  .glass-card {
+    background: rgba(var(--color-white), 0.03);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
 }
 
 .glass-card:hover {
@@ -175,10 +193,16 @@ svg {
 }
 
 .glass-purple {
-  background: rgba(123, 97, 255, 0.08);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  background: rgba(123, 97, 255, 0.16);
   border: 1px solid rgba(123, 97, 255, 0.2);
+}
+
+@media (min-width: 768px) {
+  .glass-purple {
+    background: rgba(123, 97, 255, 0.08);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+  }
 }
 
 /* Legacy aliases for compatibility */
