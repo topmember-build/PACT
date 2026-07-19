@@ -643,3 +643,14 @@ body { top: 0 !important; }
 #goog-gt-tt { display: none !important; }
 .goog-te-spinner-pos { display: none !important; }
 
+/* --- HARDWARE ACCELERATION TO PREVENT SAFARI FLICKER/FLASH --- */
+.no-flash {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  perspective: 1000px;
+  -webkit-perspective: 1000px;
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
+  will-change: transform, opacity;
+}
+

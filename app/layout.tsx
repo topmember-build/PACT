@@ -35,7 +35,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           rel="stylesheet"
         />
       </head>
-      <body className="bg-background text-white min-h-screen antialiased relative transition-colors duration-300">
+      <body className="bg-background text-white min-h-screen antialiased relative">
         <TranslationProvider>
           <ReownProvider>
             <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>

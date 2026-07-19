@@ -1025,7 +1025,7 @@ export default function CreatePactPage() {
         <StepProgress step={step} total={TOTAL_STEPS} />
 
         {/* Step content */}
-        <div className="glass-card p-8 min-h-[480px] flex flex-col">
+        <div className="glass-card p-8 min-h-[480px] flex flex-col no-flash">
           <div className="flex-1">
             <AnimatePresence mode="wait">
               <motion.div
@@ -1034,6 +1034,7 @@ export default function CreatePactPage() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.25 }}
+                className="no-flash"
               >
                 {step === 1 && (
                   <Step1Token state={state} onChange={t => setState(s => ({ ...s, token: t }))} />
