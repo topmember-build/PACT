@@ -43,8 +43,9 @@ export const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_PACT_ADDRESS || '';
 // ─── PROVIDER HELPERS ─────────────────────────────────────────────────────────
 
 export function getBrowserProvider(): ethers.BrowserProvider | null {
+  // Detect various injected providers (MetaMask, WalletConnect, etc.)
   if (typeof window === 'undefined') return null;
-  const eth = (window as any).ethereum;
+  const eth = (window as any).ethereum || (window as any).web3?.currentProvider;
   if (!eth) return null;
   return new ethers.BrowserProvider(eth);
 }
@@ -55,15 +56,20 @@ export function getJsonRpcProvider(): ethers.JsonRpcProvider {
 }
 
 export async function getSignerAndContract() {
-  if (!CONTRACT_ADDRESS) throw new Error('Contract address not configured. Set NEXT_PUBLIC_PACT_ADDRESS.');
+  if (!CONTRACT_ADDRESS || !ethers.isAddress(CONTRACT_ADDRESS)) {
+    throw new Error('Pact contract address is invalid or not configured. Please check your NEXT_PUBLIC_PACT_ADDRESS environment variable.');
+  }
   const provider = getBrowserProvider();
-  if (!provider) throw new Error('No wallet detected. Please install MetaMask.');
+  if (!provider) throw new Error('No wallet detected. Please connect a wallet.');
   const signer = await provider.getSigner();
   const contract = new ethers.Contract(CONTRACT_ADDRESS, PACT_ABI, signer);
   return { signer, contract, provider };
 }
 
 export function getReadContract(): ethers.Contract {
+  if (!CONTRACT_ADDRESS || !ethers.isAddress(CONTRACT_ADDRESS)) {
+    throw new Error('Pact contract address is invalid or not configured. Please check your NEXT_PUBLIC_PACT_ADDRESS environment variable.');
+  }
   const provider = getBrowserProvider() || getJsonRpcProvider();
   return new ethers.Contract(CONTRACT_ADDRESS, PACT_ABI, provider);
 }
