@@ -7,7 +7,7 @@
 /* --- CSS CUSTOM PROPERTIES -------------------------------------------------- */
 :root {
   color-scheme: dark;
-  --color-white: 255, 255, 255;
+  --color-white: 255 255 255;
   --color-bg-base: #050517;
 
   /* Brand */
@@ -19,18 +19,18 @@
   /* Backgrounds */
   --color-bg: var(--color-bg-base);
   --color-bg-2: #07071f;
-  --color-surface: rgba(var(--color-white), 0.035);
-  --color-surface-2: rgba(var(--color-white), 0.06);
+  --color-surface: rgb(var(--color-white) / 0.035);
+  --color-surface-2: rgb(var(--color-white) / 0.06);
 
   /* Borders */
-  --color-border: rgba(var(--color-white), 0.07);
-  --color-border-2: rgba(var(--color-white), 0.14);
+  --color-border: rgb(var(--color-white) / 0.07);
+  --color-border-2: rgb(var(--color-white) / 0.14);
   --color-border-purple: rgba(123, 97, 255, 0.3);
 
   /* Text */
-  --color-text: rgba(var(--color-white), 1);
-  --color-text-secondary: rgba(var(--color-white), 0.65);
-  --color-text-muted: rgba(var(--color-white), 0.38);
+  --color-text: rgb(var(--color-white) / 1);
+  --color-text-secondary: rgb(var(--color-white) / 0.65);
+  --color-text-muted: rgb(var(--color-white) / 0.38);
   /* Status */
   --color-success: #4ADE80;
   --color-warning: #FBBF24;
@@ -51,7 +51,7 @@
 
 .light {
   color-scheme: light;
-  --color-white: 15, 15, 30;
+  --color-white: 15 15 30;
   --color-bg-base: #F8F8FF;
   --color-bg-2: #EFEFF5;
   --color-border-purple: rgba(123, 97, 255, 0.4);

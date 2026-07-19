@@ -844,7 +844,7 @@ function Step6Seal({ state, onSealed }: { state: WizardState; onSealed: (pactId:
               key={stage}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-xl font-medium text-white mb-2"
+              className="text-xl font-medium text-[#ffffff] mb-2"
             >
               {stageLabels[stage]}
             </motion.p>
@@ -866,7 +866,7 @@ function Step6Seal({ state, onSealed }: { state: WizardState; onSealed: (pactId:
                 transition={{ delay: 0.5 }}
                 className="glass-purple rounded-xl p-5 max-w-sm mx-auto mt-4 border border-primary/20"
               >
-                <p className="text-sm text-white/80 italic leading-relaxed">"{state.futureMessage}"</p>
+                <p className="text-sm text-[#ffffff]/80 italic leading-relaxed">"{state.futureMessage}"</p>
               </motion.div>
             )}
 
@@ -874,7 +874,7 @@ function Step6Seal({ state, onSealed }: { state: WizardState; onSealed: (pactId:
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="text-xs text-white/30 font-mono mt-4"
+                className="text-xs text-[#ffffff]/30 font-mono mt-4"
               >
                 tx: {txHash.slice(0, 20)}…
               </motion.p>
@@ -903,7 +903,7 @@ function Step6Seal({ state, onSealed }: { state: WizardState; onSealed: (pactId:
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="text-display glow-text mb-4"
+              className="text-display text-[#ffffff] glow-text mb-4"
             >
               Your Pact Has Been Sealed.
             </motion.h2>
@@ -916,7 +916,7 @@ function Step6Seal({ state, onSealed }: { state: WizardState; onSealed: (pactId:
                 className="glass-purple rounded-xl p-5 max-w-sm mx-auto mb-8 border border-primary/20"
               >
                 <div className="text-xs uppercase tracking-widest text-primary/60 mb-2">Your Commitment</div>
-                <p className="text-sm text-white/85 italic leading-relaxed">"{state.futureMessage}"</p>
+                <p className="text-sm text-[#ffffff]/85 italic leading-relaxed">"{state.futureMessage}"</p>
               </motion.div>
             )}
 
@@ -941,7 +941,7 @@ function Step6Seal({ state, onSealed }: { state: WizardState; onSealed: (pactId:
             <div className="mb-4 text-red-400">
               <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="mx-auto"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
             </div>
-            <h3 className="text-lg font-medium text-white mb-2">Seal Failed</h3>
+            <h3 className="text-lg font-medium text-[#ffffff] mb-2">Seal Failed</h3>
             <p className="text-sm text-red-400 mb-6 max-w-sm mx-auto">{error}</p>
             <button
               onClick={() => { setStage('idle'); setError(null); }}
